@@ -9,30 +9,39 @@ original triga model.
 import numpy as np
 
 #read in positions from file
-F = open('pos.txt', 'r').readlines()
+F = open('input/pos_surf.txt', 'r').readlines()
 surf = [line for line in F]
-positions = np.array([(j[17:26], j[28:37]) for j in surf]).astype(float)
+surf_positions = np.array([(j[16:26], j[27:37]) for j in surf]).astype(float)
 
 #read in positions from file
-G = open('pos_cell.txt', 'r').readlines()
+G = open('input/pos_cell.txt', 'r').readlines()
 cell = [line for line in G]
+cell_positions = np.array([(j[37:47], j[48:58]) for j in cell]).astype(float)
 
 #calculate r and theta
-radii = np.sqrt(np.sum((positions**2), axis=1))
-theta = np.arctan(positions[:,1] / positions[:,0]) * (180 / np.pi)
+cell_radii = np.sqrt(np.sum((cell_positions**2), axis=1))
+cell_theta = np.arctan(cell_positions[:,1] / cell_positions[:,0]) * (180 / np.pi)
 
 #input value to rotate fuel elements by
-theta_rotated = 30  #degrees counterclockwise
+theta_rotated = 0  #degrees counterclockwise
 
 #calculate new positions
-new_theta = theta + theta_rotated
-new_positions = (np.array([np.cos(new_theta), np.sin(new_theta)]) * radii).T
+cell_new_theta = (cell_theta + theta_rotated) * (np.pi / 180)
+cell_new_positions = (np.array([np.cos(cell_new_theta), np.sin(cell_new_theta)]) * cell_radii).T
+
+#calculate r and theta for surf
+surf_radii = np.sqrt(np.sum((surf_positions**2), axis=1))
+surf_theta = np.arctan(surf_positions[:,1] / surf_positions[:,0]) * (180 / np.pi)
+
+#calculate new positions
+surf_new_theta = (surf_theta + theta_rotated) * (np.pi / 180)
+surf_new_positions = (np.array([np.cos(surf_new_theta), np.sin(surf_new_theta)]) * surf_radii).T
 
 
 #replace positions values in surface cards with new positions
 s = ''
-for pos in range(len(new_positions)):
-    new_surf = '{}{:.6f}  {:.6f}{}'.format(surf[pos][0:17], new_positions[pos,0], new_positions[pos,1], surf[pos][37:])
+for pos in range(len(surf_new_positions)):
+    new_surf = '{}{:.6f}  {:.6f}{}'.format(surf[pos][0:16], surf_new_positions[pos,0], surf_new_positions[pos,1], surf[pos][37:])
     s += new_surf
 
 #write new_surfaces
@@ -41,9 +50,9 @@ with open('output/new_surfaces.txt', 'w') as F:
 
 
 #replace positions values in cell cards with new positions
-s = ''
-for pos in range(len(new_positions)):
-    new_cell = '{}{:.6f}  {:.6f}{}'.format(cell[pos][0:37], new_positions[pos,0], new_positions[pos,1], cell[pos][58:])
+s = ' 1100     0         -203   fill=4   (  0.000000   0.000000  0.00)  u=7 $ A1\n'
+for pos in range(len(cell_new_positions) - 1):
+    new_cell = '{}{:.6f}  {:.6f}{}'.format(cell[pos + 1][0:37], cell_new_positions[pos + 1,0], cell_new_positions[pos + 1,1], cell[pos + 1][58:])
     s += new_cell
 
 #write new_cells
