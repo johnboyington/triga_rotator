@@ -46,6 +46,6 @@ for pos in range(len(new_positions)):
     new_cell = '{}{:.6f}  {:.6f}{}'.format(cell[pos][0:37], new_positions[pos,0], new_positions[pos,1], cell[pos][58:])
     s += new_cell
 
-#write new_surfaces
+#write new_cells
 with open('output/new_cells.txt', 'w') as F:
     F.write(s)
