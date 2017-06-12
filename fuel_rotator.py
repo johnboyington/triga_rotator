@@ -24,7 +24,7 @@ def rotate(origin, point, angle):
 
 
 #input value to rotate fuel elements by
-theta_rotated = -30  #degrees counterclockwise
+theta_rotated = -50.363330843471  #degrees counterclockwise
 
 
 theta_rotated *= (np.pi / 180)
@@ -44,7 +44,7 @@ cell_positions = np.array([(j[37:47], j[48:58]) for j in cell]).astype(float)
 s = ''
 for pos in range(len(surf_positions)):
     surf_new_positions = rotate((0, 0), surf_positions[pos], theta_rotated)
-    new_surf = '{}{:.6f}  {:.6f}{}'.format(surf[pos][0:16], surf_new_positions[0], surf_new_positions[1], surf[pos][37:])
+    new_surf = '{}{:11.6f}{:11.6f}{}'.format(surf[pos][0:15], surf_new_positions[0], surf_new_positions[1], surf[pos][37:])
     s += new_surf
 
 #write new_surfaces
@@ -56,7 +56,7 @@ with open('output/new_surfaces.txt', 'w') as F:
 s = ' 1100     0         -203   fill=4   (  0.000000   0.000000  0.00)  u=7 $ A1\n'
 for pos in range(len(cell_positions) - 1):
     cell_new_positions = rotate((0, 0), cell_positions[pos + 1], theta_rotated)
-    new_cell = '{}{:.6f}  {:.6f}{}'.format(cell[pos + 1][0:37], cell_new_positions[0], cell_new_positions[1], cell[pos + 1][58:])
+    new_cell = '{}{:>.6f}  {:>.6f}{}'.format(cell[pos + 1][0:37], cell_new_positions[0], cell_new_positions[1], cell[pos + 1][58:])
     s += new_cell
 
 #write new_cells
