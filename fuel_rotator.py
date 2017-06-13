@@ -62,3 +62,27 @@ for pos in range(len(cell_positions) - 1):
 #write new_cells
 with open('output/new_cells.txt', 'w') as F:
     F.write(s)
+
+#write cards with plain new positions
+s = ''
+for pos in range(len(surf_positions)):
+    new_positions = rotate((0, 0), surf_positions[pos], theta_rotated)
+    new_pos = '{:11.6f}{:11.6f} 0.000000\n'.format(new_positions[0], new_positions[1])
+    s += new_pos
+
+#write new_positions
+with open('output/new_positions.txt', 'w') as F:
+    F.write(s)
+
+#write cards with plain new positions for fuel only
+s = ''
+for pos in range(len(surf_positions)):
+    new_positions = rotate((0, 0), surf_positions[pos], theta_rotated)
+    #if pos != 12 or pos != 21 or pos != 33 or pos != 38 or pos != 69:
+    if pos not in (12, 21, 33, 38, 69):
+        new_pos = '{:11.6f}{:11.6f} 0.000000\n'.format(new_positions[0], new_positions[1])
+        s += new_pos
+
+#write new_positions for fuel only
+with open('output/new_positions_fuel_only.txt', 'w') as F:
+    F.write(s)
